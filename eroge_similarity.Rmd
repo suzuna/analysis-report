@@ -9,7 +9,7 @@ output:
     number_sections: false
     toc: false
     toc_depth: 1
-    keep_md: true
+    keep_md: false
     css: main.css
 ---
 
