@@ -8,5 +8,3 @@ html_document:
   number_sections: false
   css: main.css
   keep_md: false
-  includes:
-    in_header: in_header.html

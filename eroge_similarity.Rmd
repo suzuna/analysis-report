@@ -10,45 +10,8 @@ output:
     toc: false
     toc_depth: 1
     keep_md: true
+    css: main.css
 ---
-<!--
-<style type="text/css">
-@import "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/rainbow.min.css";
-</style>
--->
-
-```{css, echo=FALSE,eval=FALSE}
-pre{
-  border: transparent;
-  background: transparent;
-  padding: 0px;
-}
-
-/* preのpadding 9.5px + border 1px */
-code.hljs{
-  padding: 10.5px;
-}
-
-code{
-  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
-}
-body {
-    font-size: 16px;
-}
-h1 {
-    font-size: 1.5em;
-}
-h2 {
-    font-size: 1.35em;
-}
-h3 {
-    font-size: 1.2em;
-}
-code, pre{
-    font-size: 14px;
-}
-```
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=TRUE,include=TRUE,tidy=FALSE,message=FALSE,warning=FALSE,error=FALSE,cache=FALSE)
