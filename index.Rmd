@@ -1,6 +1,6 @@
 ---
 title: "データ分析のレポート置き場"
-date: "`r Sys.Date()`"
+date: ""
 output: html_document
 ---
 
