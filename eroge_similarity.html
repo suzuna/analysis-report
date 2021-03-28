@@ -176,12 +176,12 @@ pre code {
 <ul>
 <li>批評空間というエロゲレビューサイトのレビューデータを用い、指定したエロゲと似たエロゲをコサイン類似度で探した。いわゆるアイテムベースのレコメンド。</li>
 <li>コサイン類似度を使っただけの機械学習などを用いない簡素な方法だが、体感でそれなりに納得感のある結果が得られた。</li>
-<li>本記事の内容を、Shinyを用いて<a href="https://suzuna.shinyapps.io/eroge_recommend/">Webアプリ</a>を実装した。</li>
+<li>Shinyを用いて<a href="https://suzuna.shinyapps.io/eroge_recommend/">Webアプリ</a>を実装した。本記事の内容を試すことができる。</li>
 </ul>
 </div>
 <div id="データの取得" class="section level2">
 <h2>データの取得</h2>
-<p>批評空間では、春ゲーや冬ゲー、学園ものなど、エロゲの特徴を表すタグ（POVタグと言います）をユーザーがレビューで付けることができる。このPOVタグの数を特徴量ベクトルとみなして、あるゲームとのコサイン類似度を求めることができる。この手法により、あるエロゲと似たエロゲを探す。</p>
+<p>批評空間では、春ゲーや冬ゲー、学園ものなど、エロゲの特徴を表すタグ（POVタグと言う）をユーザーがレビューで付けることができる。このPOVタグの数を特徴量ベクトルとみなして、あるゲームとのコサイン類似度を求めることができる。この手法により、あるエロゲと似たエロゲを探す。</p>
 <p>批評空間の<a href="https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/sql_for_erogamer_index.php">SQLを叩けばエロゲデータやレビューデータなどを得られるページ</a>において、以下の右辺のSQLを叩いた結果を一旦csvで保存して、readr::read_csvで左辺のオブジェクトに入れているというイメージ。なお、データを取得したのは2021年の2月末。</p>
 <pre class="r"><code>library(tidyverse)
 library(lubridate)
@@ -382,6 +382,7 @@ suggest_similar_games(&quot;ゆのはな&quot;) %&gt;%
 ## 18             0.635 ゆきいろ ～空に六花の住む町～ ねこねこソフト      2012/4/27
 ## 19             0.633 5 -ファイブ-                  RaM                 2008/7/25
 ## 20             0.624 まいてつ                      Lose                2016/3/25</code></pre>
+<p>二つ以上エロゲを与える場合は、与えたそれぞれのエロゲの特徴量ベクトルを平均した特徴量ベクトルを作り、それとのコサイン類似度を求める。</p>
 <pre class="r"><code># 二つ以上エロゲを与えて似たエロゲを返す
 suggest_similar_games(c(&quot;ゆのはな&quot;,&quot;Making＊Lovers&quot;,&quot;こいびとどうしですることぜんぶ&quot;)) %&gt;% 
   select(cosine_similarity,gamename,brandname,sellday) %&gt;% 
@@ -409,6 +410,12 @@ suggest_similar_games(c(&quot;ゆのはな&quot;,&quot;Making＊Lovers&quot;,&qu
 ## 18             0.698 銀色、遥か                        tone work&#39;s      2016/8/~
 ## 19             0.689 杜氏の郷                          ハートブリング   2004/11~
 ## 20             0.686 Sugar*Style                       SMEE             2019/1/~</code></pre>
+<p>体感的には納得のいく結果である。</p>
+</div>
+<div id="webアプリの実装" class="section level2">
+<h2>Webアプリの実装</h2>
+<p>RでWebアプリが作れるShinyで実装した。→<a href="https://suzuna.shinyapps.io/eroge_recommend/">Webアプリ</a></p>
+<p>selectizeInput()というselectize.jsをバックで動かせるShinyの関数を用いたことで、エロゲ名の一部を入力すると該当するエロゲがサジェストで得られる。エロゲ数が7000本以上にもなり、ブラウザ側でサジェストを動かすと重いので、サーバーサイドで動かした。（<a href="https://shiny.rstudio.com/articles/selectize.html">参考</a>）</p>
 </div>
 
 

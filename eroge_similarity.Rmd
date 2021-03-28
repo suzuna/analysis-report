@@ -29,11 +29,11 @@ library(here)
 
 - 批評空間というエロゲレビューサイトのレビューデータを用い、指定したエロゲと似たエロゲをコサイン類似度で探した。いわゆるアイテムベースのレコメンド。
 - コサイン類似度を使っただけの機械学習などを用いない簡素な方法だが、体感でそれなりに納得感のある結果が得られた。
-- 本記事の内容を、Shinyを用いて[Webアプリ](https://suzuna.shinyapps.io/eroge_recommend/)を実装した。
+- Shinyを用いて[Webアプリ](https://suzuna.shinyapps.io/eroge_recommend/)を実装した。本記事の内容を試すことができる。
 
 ## データの取得
 
-批評空間では、春ゲーや冬ゲー、学園ものなど、エロゲの特徴を表すタグ（POVタグと言います）をユーザーがレビューで付けることができる。このPOVタグの数を特徴量ベクトルとみなして、あるゲームとのコサイン類似度を求めることができる。この手法により、あるエロゲと似たエロゲを探す。
+批評空間では、春ゲーや冬ゲー、学園ものなど、エロゲの特徴を表すタグ（POVタグと言う）をユーザーがレビューで付けることができる。このPOVタグの数を特徴量ベクトルとみなして、あるゲームとのコサイン類似度を求めることができる。この手法により、あるエロゲと似たエロゲを探す。
 
 批評空間の[SQLを叩けばエロゲデータやレビューデータなどを得られるページ](https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/sql_for_erogamer_index.php)において、以下の右辺のSQLを叩いた結果を一旦csvで保存して、readr::read_csvで左辺のオブジェクトに入れているというイメージ。なお、データを取得したのは2021年の2月末。
 
@@ -192,10 +192,20 @@ suggest_similar_games <- function(pickup_gamename){
 suggest_similar_games("ゆのはな") %>% 
   select(cosine_similarity,gamename,brandname,sellday) %>% 
   head(20)
+```
 
+二つ以上エロゲを与える場合は、与えたそれぞれのエロゲの特徴量ベクトルを平均した特徴量ベクトルを作り、それとのコサイン類似度を求める。
+```{r}
 # 二つ以上エロゲを与えて似たエロゲを返す
 suggest_similar_games(c("ゆのはな","Making＊Lovers","こいびとどうしですることぜんぶ")) %>% 
   select(cosine_similarity,gamename,brandname,sellday) %>% 
   head(20)
 ```
 
+体感的には納得のいく結果である。
+
+## Webアプリの実装
+
+RでWebアプリが作れるShinyで実装した。→[Webアプリ](https://suzuna.shinyapps.io/eroge_recommend/)
+
+selectizeInput()というselectize.jsをバックで動かせるShinyの関数を用いたことで、エロゲ名の一部を入力すると該当するエロゲがサジェストで得られる。エロゲ数が7000本以上にもなり、ブラウザ側でサジェストを動かすと重いので、サーバーサイドで動かした。（[参考](https://shiny.rstudio.com/articles/selectize.html)）
