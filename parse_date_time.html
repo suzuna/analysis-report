@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="" />
+
+<meta name="date" content="2020-04-30" />
+
+<title>タイムゾーンを指定した時のlubridate::parse_date_timeとlubridate::parse_date_time2の速度の違い</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+<link rel="stylesheet" href="main.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">タイムゾーンを指定した時のlubridate::parse_date_timeとlubridate::parse_date_time2の速度の違い</h1>
+<h4 class="date">2020-04-30</h4>
+
+</div>
+
+
+<div id="はじめに" class="section level2">
+<h2>はじめに</h2>
+<p>character型をPOSIXct型にするas.POSIXctは遅いです。そのため、長いcharacter型のベクトルをPOSIXct型のベクトルにするときは、高速なlubridate::parse_date_timeや、さらに高速なlubridate::parse_date_time2を用いる手があります。ただし、parse_date_timeやparse_date_time2においては、タイムゾーンであるtz引数はデフォルトでUTCなので、tz=“Asia/Tokyo”と指定しないとUTCになります。</p>
+<p>ここで、tz=“Asia/Tokyo”を指定するかどうかで、as.POSIXct、parse_date_time、parse_date_time2の各関数の実行時間にどれくらいの差があるかを調べました。</p>
+<p>なんでこんなことを調べようと思ったかというと、tz=“Asia/Tokyo”を指定して長いcharacter型ベクトルをPOSIXct型にするとき、parse_date_time(exact=FALSE)よりも速いと思いparse_date_time2(exact=FALSE)を使っていたのですが、後者が妙に遅く、試しに前者を使ってみると速かったからです。</p>
+</div>
+<div id="lubridateはデフォルトではtzutc" class="section level2">
+<h2>lubridateはデフォルトではtz=“UTC”</h2>
+<p>as.POSIXctはタイムゾーンを指定しなくても自動的にロケールのタイムゾーンになるようです。つまり、日本語環境においては自動的にtz=“Asia/Tokyo”になります。</p>
+<p>一方、parse_date_timeやparse_date_time2はtzを指定しないとUTCになります。ちなみにこれはreadr::parse_datetimeでも同じです。</p>
+<p>なお、フォーマット（“%Y-%m-%d %H:%M:%S”のようなもの）の引数の名前は、as.POSIXctではformat、parse_date_timeとparse_date_time2ではordersであることに注意が必要です。</p>
+<pre class="r"><code>library(lubridate)
+library(microbenchmark)
+library(magrittr)
+
+x &lt;- &quot;2020-04-20 01:00:00&quot;
+as.POSIXct(x,format=&quot;%Y-%m-%d %H:%M:%S&quot;)</code></pre>
+<pre><code>## [1] &quot;2020-04-20 01:00:00 JST&quot;</code></pre>
+<pre class="r"><code>parse_date_time(x,orders=&quot;%Y-%m-%d %H:%M:%S&quot;)</code></pre>
+<pre><code>## [1] &quot;2020-04-20 01:00:00 UTC&quot;</code></pre>
+<pre class="r"><code>parse_date_time2(x,orders=&quot;%Y-%m-%d %H:%M:%S&quot;)</code></pre>
+<pre><code>## [1] &quot;2020-04-20 01:00:00 UTC&quot;</code></pre>
+</div>
+<div id="速度の比較" class="section level2">
+<h2>速度の比較</h2>
+<p>長さ10000のcharacter型のベクトルをPOSIXct型にするのにかかる時間を調べます。</p>
+<p>まずtzを指定しない場合です。先行記事がある通り、実行時間は</p>
+<ul>
+<li>as.POSIXct</li>
+<li>parse_date_time(exact=FALSE)</li>
+<li>parse_date_time(exact=TRUE)</li>
+<li>parse_date_time2(exact=FALSE)</li>
+<li>parse_date_time2(exact=TRUE)</li>
+</ul>
+<p>の下に行くほど早くなります。つまり、parse_date_time2はparse_date_timeよりも早く、exact=TRUEはexact=FALSEよりも速いです。</p>
+<p>（先行記事がある通り、というのは例えばこの辺り：<a href="https://qiita.com/yutannihilation/items/289780723317e72e1c06">R で文字列を POSIX time に変換するには lubridate::parse_date_time2() がやっぱりちょっぱや</a>）</p>
+<p>こうして見てみるとexactをTRUEにするとかなり速くなりますね。</p>
+<pre class="r"><code>format1 &lt;- &quot;%Y-%m-%d %H:%M:%S&quot;
+format2 &lt;- &quot;YmdHMS&quot;
+
+a &lt;- as.POSIXct(&quot;2020-04-24 00:00:00&quot;)+sample(seq(0,60*60*24*30,1),size=10000,replace=TRUE)
+a &lt;- as.character(a)
+
+# タイムゾーンを指定しない
+# このとき、as.POSIXctはtz=&quot;Asia/Tokyo&quot;だが、それ以外はtz=&quot;UTC&quot;なことに注意
+microbenchmark(
+  as.POSIXct=as.POSIXct(a,format=format1),
+  parse=parse_date_time(a,orders=format1,locale=&quot;C&quot;,exact=FALSE),
+  parse2=parse_date_time2(a,orders=format1,exact=FALSE),
+  parse_exact=parse_date_time(a,orders=format1,exact=TRUE),
+  parse2_exact=parse_date_time2(a,orders=format2,exact=TRUE),
+  times=100
+) %&gt;%
+  print(unit=&quot;ms&quot;,signif=5)</code></pre>
+<pre><code>## Unit: milliseconds
+##          expr     min        lq      mean    median        uq      max neval
+##    as.POSIXct 99.6660 100.03000 100.56000 100.23000 100.76000 104.4500   100
+##         parse  7.3702   7.55080   7.85870   7.73200   7.89080  10.6900   100
+##        parse2  0.5435   0.55790   0.59388   0.57630   0.62580   0.7046   100
+##   parse_exact  0.9034   0.91765   1.05480   0.94100   1.07430   3.4466   100
+##  parse2_exact  0.1334   0.13890   0.16563   0.14535   0.20195   0.3191   100</code></pre>
+<p>次にtzを指定する場合です。実行時間は</p>
+<ul>
+<li>as.POSIXct</li>
+<li>parse_date_time2(exact=FALSE)</li>
+<li>parse_date_time(exact=FALSE)</li>
+<li>parse_date_time(exact=TRUE)</li>
+<li>parse_date_time2(exact=TRUE)</li>
+</ul>
+<p>の下に行くほど早くなります。</p>
+<p>exact=FALSEの場合、parse_date_time2はparse_date_timeよりも遅いというのが意外です。一方、exact=TRUEではparse_date_time2の方が速いです。</p>
+<p>なお、parse_date_time2でexact=TRUEの場合は、フォーマットは“%Y-%m-%d %H:%M:%S”ではなく“YmdHMS”の形式でないとダメなことに注意が必要です。</p>
+<pre class="r"><code># タイムゾーンを指定する
+# as.POSIXctはtzを書かなくてもtz=&quot;Asia/Tokyo&quot;になる
+microbenchmark(
+  as.POSIXct=as.POSIXct(a,format=format1,tz=&quot;Asia/Tokyo&quot;),
+  parse=parse_date_time(a,orders=format1,locale=&quot;C&quot;,tz=&quot;Asia/Tokyo&quot;,exact=FALSE),
+  parse2=parse_date_time2(a,orders=format1,tz=&quot;Asia/Tokyo&quot;,exact=FALSE),
+  parse_exact=parse_date_time(a,orders=format1,tz=&quot;Asia/Tokyo&quot;,exact=TRUE),
+  parse2_exact=parse_date_time2(a,orders=format2,tz=&quot;Asia/Tokyo&quot;,exact=TRUE),
+  times=100
+) %&gt;%
+  print(unit=&quot;ms&quot;,signif=5)</code></pre>
+<pre><code>## Unit: milliseconds
+##          expr      min        lq      mean   median        uq      max neval
+##    as.POSIXct 103.3600 103.82000 104.75000 104.6000 105.29000 109.6800   100
+##         parse   7.9607   8.23660   8.59780   8.4090   8.57080  11.5290   100
+##        parse2  50.4170  50.83700  51.24300  51.1010  51.46900  54.2170   100
+##   parse_exact   1.4585   1.50120   1.58820   1.5642   1.64980   2.3737   100
+##  parse2_exact   0.8499   0.88995   0.98216   0.9231   0.95185   3.9690   100</code></pre>
+<p>tzを指定した場合としない場合の時間を見比べると、parse_date_time2はtzを指定すると実行時間が大幅に伸びますね。</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -9,10 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="" />
 
-<meta name="date" content="2021-03-29" />
+<meta name="date" content="2021-02-18" />
 
-<title>データ分析のレポート置き場</title>
+<title>RMarkdownにhighlight.jsのcssテーマを適用する</title>
 
 <script src="libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -164,28 +165,53 @@ pre code {
 
 
 
-<h1 class="title toc-ignore">データ分析のレポート置き場</h1>
-<h4 class="date">2021-03-29</h4>
+<h1 class="title toc-ignore">RMarkdownにhighlight.jsのcssテーマを適用する</h1>
+<h4 class="date">2021-02-18</h4>
 
 </div>
 
 
-<hr />
-<p><a href="./about.html">About</a> <a href="https://github.com/suzuna">GitHub</a></p>
-<p>日々のデータ分析などの結果を記したRMarkdownの置き場です。記事中に記載がない限り、記事内のコードはRです。</p>
-<div id="データ分析" class="section level2">
-<h2>データ分析</h2>
-<ul>
-<li>2021/02/28 <a href="./eroge_similarity.html">コサイン類似度を用いて似ているエロゲをレコメンドする</a></li>
-</ul>
+<div id="rmarkdownにhighlight.jsのcssテーマを適用する" class="section level2">
+<h2>RMarkdownにhighlight.jsのcssテーマを適用する</h2>
+<p>highlight.jsのcssテーマを用いてRMarkdownのコードハイライトを変更する方法を示します。</p>
+<p>RMarkdownはYAML部分のオプションを用いてコード部分のハイライトを変更することができます。例えば以下の記事をご覧ください。</p>
+<p><a href="https://qiita.com/kazutan/items/ca20f26fba3f6fba81c5">R Markdownでコードハイライトのテーマ設定</a></p>
+<p>しかし、設定できるコードハイライトのテーマがdefault,tango,pygments,kate,monochrome,espresso,zenburn,haddock,textmateの9パターンしかありません。</p>
+<p>一方、highlight.jsにはたくさんの綺麗なテーマがあります。2021年2月のバージョン10.5.0時点で97パターンあります。</p>
+<p>そこで、<a href="https://blog.atusy.net/2019/04/22/rmd-line-num-with-highlightjs/">highlightjs と highlightjs-line-numbers プラグインで Rmarkdown のコードブロックに行番号をつける</a>を参考にしながら、highlight.jsのcssテーマをRMarkdownのコードハイライトに当てる方法を考えました。</p>
+<p>結論としては、以下のコードをRMarkdownのYAML部分の直下（＝本文部分の先頭）に記載します。</p>
+<pre><code>&lt;style type=&quot;text/css&quot;&gt;
+@import &quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/rainbow.min.css&quot;;
+&lt;/style&gt;
+
+```{css, echo=FALSE}
+pre{
+  border: transparent;
+  background: transparent;
+  padding: 0px;
+}
+
+/* preのpadding 9.5px + border 1px */
+code.hljs{
+  padding: 10.5px;
+}
+```</code></pre>
+<p><span class="citation">@importで読み込むhighlight.jsのCDNのアドレスの最後の</span>“rainbow.min.css”の“rainbow”は、<a href="https://github.com/highlightjs/highlight.js/tree/master/src/styles">highlight.jsのGitHubのリポジトリ</a>にある“テーマ名.css”の“テーマ名”です。<a href="https://highlightjs.org/static/demo/">highlight.jsのdemo</a>で使いたいテーマを見つけたら、このリポジトリからテーマ名を探します。CDNで読み込むときはテーマ名に.minを付けます。</p>
+<p>RMarkdownのコードブロックでは、border: 1px, padding: 9.5pxのpreという要素の中に、code.hljsという要素のコード部分が存在します。上のコードの最初の3行（style～/style部分）だけをRMarkdownに書いてcssを変更しないと、code.hljsはテーマの背景に変わっているのに、borderとpaddingはデフォルトのグレーのまま残ってしまいます。highlight.jsのcssはcode.hljsにかかるので、上のようにpreのborderとbackgroundをcode.hljsの透過としてpaddingをいじることで、見た目をうまく調節しています。</p>
 </div>
-<div id="小ネタ" class="section level2">
-<h2>小ネタ</h2>
-<ul>
-<li>2021/02/18 <a href="./rmarkdown_highlightjs_css.html">RMarkdownにhighlight.jsのcssテーマを適用する</a></li>
-<li>2021/02/08 <a href="./rmecab_tidy_text_result.html">RMeCabで形態素解析した結果をtidy textなdata.frameで取得する</a></li>
-<li>2020/04/30 <a href="./parse_date_time.html">タイムゾーンを指定した時のlubridate::parse_date_timeとlubridate::parse_date_time2の速度の違い</a></li>
-</ul>
+<div id="おまけフォント変更" class="section level2">
+<h2>おまけ（フォント変更）</h2>
+<p>以下を追加することで、RMarkdownのコード部分のフォントをコード用のフォントに変えられます。</p>
+<pre><code>```{css, echo=FALSE}
+code{
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+}
+```</code></pre>
+<p>インラインのコードのフォントも変わります。</p>
+</div>
+<div id="環境" class="section level2">
+<h2>環境</h2>
+<p>Rは4.0.2、RMarkdownは2.7、highlight.jsは10.5.0のバージョンを使用しています。</p>
 </div>
 
 

@@ -1,0 +1,143 @@
+---
+title: "RMeCabで形態素解析した結果をtidy textなdata.frameで取得する"
+author: ""
+date: "2021-02-08"
+output: 
+  html_document:
+    self_contained: false
+    lib_dir: libs
+    number_sections: false
+    toc: false
+    toc_depth: 1
+    keep_md: false
+    css: main.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE,include=TRUE,tidy=FALSE,message=FALSE,warning=FALSE,error=FALSE,cache=FALSE)
+knitr::opts_chunk$set(out.width="100%",out.height="50%",fig.height=2,fig.align="center")
+library(tidyverse)
+library(magrittr)
+library(knitr)
+```
+
+RMeCabを使っていると、品詞や品詞細分類、読みなどの結果をdata.frameの形で取得したいと思うことがあります。ここでは、品詞についての全ての結果と、品詞情報のみをdata.frameで取得する方法を示します。
+
+例として、以下のtextを形態素解析します。
+
+```{r}
+library(tidyverse)
+library(magrittr)
+library(RMeCab)
+
+text <- c("吾輩は猫である。","名前はまだない。")
+```
+
+## 全結果を取得する場合
+以下のように、RMeCabText関数は、一つ一つの形態素ごとに「表層形」、「品詞」、「品詞細分類1」、「品詞細分類2」、「品詞細分類3」、「活用形1」、「活用形2」、「原形」、「読み」、「発音」の長さ10のベクトルを要素に持つリストを作ります。
+
+```{r,results="hide"}
+tmp <- tempfile()
+write(text[1],tmp)
+rmecab_text <- RMeCabText(tmp)
+```
+
+```{r}
+rmecab_text %>% 
+  head(3)
+```
+
+なお、RMeCabTextはファイルから読み込むため、R上のオブジェクトをRMeCabTextに掛ける場合はtempfileで一時ファイルを作ってそれを読み込む形をとります。
+
+ということは、textの各要素についてRMeCabTextを行い、各結果のリストをflatten_chrして全部繋げてから10列のdata.frameにすれば欲しい結果が得られます。
+
+```{r}
+res1 <- text %>% 
+  map(function(x){
+    tmp <- tempfile()
+    write(x,tmp)
+    func <- quietly(RMeCabText)
+    res <- func(tmp)$result
+    
+    res_df <- res %>% 
+      flatten_chr() %>% 
+      matrix(ncol=10,byrow=TRUE) %>%
+      as.data.frame() %>%
+      set_colnames(c("surface","pos","pos1","pos2","pos3","form1","form2","base","yomi","hatsuon"))
+    
+    file.remove(tmp)
+    return(res_df)
+  }) %>% 
+  # textの何番目の要素を形態素解析したかというidを付けておく
+  enframe(name="id",value="value") %>% 
+  unnest(value) %>%
+  as.data.frame()
+
+res1
+```
+
+RMeCabTextは読み込んだファイルパスをコンソールに出力します。これはありがたいのですが、今回読み込んでいるのは一時ファイルであり、しかもtextの1要素ずつ一時ファイルを作っているためにコンソールの出力がすごい量になるので、purrr::quietlyを用いて出力しないようにしています。
+
+今形態素解析にかけたtextはベクトルでしたが、実際の分析では以下のようなdata.frameの場合もよくあります。
+
+```{r}
+df <- data.frame(sentence_id=1:2,text=text)
+df
+```
+
+その場合でも、一発でtext列と紐付いた結果が得られますね。
+
+```{r}
+left_join(df,res1,by=c("sentence_id"="id")) %>% 
+  head(3)
+```
+
+このような綺麗な形式のdata.frameが得られると、その後の分析が楽になりますね。
+
+## 語と品詞だけあればよい場合
+品詞細分類などの列は不要であり、形態素解析された語と品詞の列だけあれば十分という場合も多いです。
+
+この場合、上記のコードを実行後にselectで必要な列のみ選択してもいいのですが、以下のRMeCabCを用いる方法もあります。
+
+RMeCabCはベクトルを引数に取り、以下のような返り値を返します。
+
+```{r}
+RMeCabC(text[1]) %>%
+  head(3)
+```
+
+ということは、flatten_chrすれば、分かち書きされた結果のベクトルに、品詞情報が名前として付いた名前付きベクトルが得られるので、以下のようにすれば欲しい結果が得られます。
+```{r}
+res2 <- text %>% 
+  map(function(x){
+    mecab_raw <- RMeCabC(x)
+    mecab_vec <- flatten_chr(mecab_raw)
+    mecab_df <- data.frame(surface=mecab_vec,pos=names(mecab_vec))
+    return(mecab_df)
+  }) %>% 
+  enframe(name="id",value="value") %>% 
+  unnest(value) %>%
+  as.data.frame()
+
+res2 %>% 
+  head
+```
+
+形態素解析にかけたいtextがdata.frameの形式の場合でも、先の例と同様にすれば結果が得られます。
+
+purrr様々ですね。
+
+## tidy text
+tidy textという概念があります。tidy textについては以下の書籍が詳しいです。
+
+[Rによるテキストマイニング ―tidytextを活用したデータ分析と可視化の基礎](https://www.amazon.co.jp/R%E3%81%AB%E3%82%88%E3%82%8B%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%83%9E%E3%82%A4%E3%83%8B%E3%83%B3%E3%82%B0-%E2%80%95tidytext%E3%82%92%E6%B4%BB%E7%94%A8%E3%81%97%E3%81%9F%E3%83%87%E3%83%BC%E3%82%BF%E5%88%86%E6%9E%90%E3%81%A8%E5%8F%AF%E8%A6%96%E5%8C%96%E3%81%AE%E5%9F%BA%E7%A4%8E-Julia-Silge/dp/4873118301)
+
+これは、以下の英語の原文を和訳したものです。
+
+[Text Mining with R](https://www.tidytextmining.com/)
+
+原文の第1章冒頭で、tidy textは以下のように定義されています。
+
+>"We thus define the tidy text format as being a table with one-token-per-row. A token is a meaningful unit of text, such as a word, that we are interested in using for analysis, and tokenization is the process of splitting text into tokens."
+
+1行につき1トークン（単語や形態素など）のdata.frameの形でトークンが記載されているデータのことです。この記事で紹介した方法では、形態素解析の結果がtidy textな形式で得られるので、その後のデータの加工が容易になるというメリットがあります。

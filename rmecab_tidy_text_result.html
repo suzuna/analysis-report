@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="" />
+
+<meta name="date" content="2021-02-08" />
+
+<title>RMeCabで形態素解析した結果をtidy textなdata.frameで取得する</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+<link rel="stylesheet" href="main.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">RMeCabで形態素解析した結果をtidy textなdata.frameで取得する</h1>
+<h4 class="date">2021-02-08</h4>
+
+</div>
+
+
+<p>RMeCabを使っていると、品詞や品詞細分類、読みなどの結果をdata.frameの形で取得したいと思うことがあります。ここでは、品詞についての全ての結果と、品詞情報のみをdata.frameで取得する方法を示します。</p>
+<p>例として、以下のtextを形態素解析します。</p>
+<pre class="r"><code>library(tidyverse)
+library(magrittr)
+library(RMeCab)
+
+text &lt;- c(&quot;吾輩は猫である。&quot;,&quot;名前はまだない。&quot;)</code></pre>
+<div id="全結果を取得する場合" class="section level2">
+<h2>全結果を取得する場合</h2>
+<p>以下のように、RMeCabText関数は、一つ一つの形態素ごとに「表層形」、「品詞」、「品詞細分類1」、「品詞細分類2」、「品詞細分類3」、「活用形1」、「活用形2」、「原形」、「読み」、「発音」の長さ10のベクトルを要素に持つリストを作ります。</p>
+<pre class="r"><code>tmp &lt;- tempfile()
+write(text[1],tmp)
+rmecab_text &lt;- RMeCabText(tmp)</code></pre>
+<pre class="r"><code>rmecab_text %&gt;% 
+  head(3)</code></pre>
+<pre><code>## [[1]]
+##  [1] &quot;吾輩&quot;     &quot;名詞&quot;     &quot;代名詞&quot;   &quot;一般&quot;     &quot;*&quot;        &quot;*&quot;       
+##  [7] &quot;*&quot;        &quot;吾輩&quot;     &quot;ワガハイ&quot; &quot;ワガハイ&quot;
+## 
+## [[2]]
+##  [1] &quot;は&quot;     &quot;助詞&quot;   &quot;係助詞&quot; &quot;*&quot;      &quot;*&quot;      &quot;*&quot;      &quot;*&quot;      &quot;は&quot;    
+##  [9] &quot;ハ&quot;     &quot;ワ&quot;    
+## 
+## [[3]]
+##  [1] &quot;猫&quot;   &quot;名詞&quot; &quot;一般&quot; &quot;*&quot;    &quot;*&quot;    &quot;*&quot;    &quot;*&quot;    &quot;猫&quot;   &quot;ネコ&quot; &quot;ネコ&quot;</code></pre>
+<p>なお、RMeCabTextはファイルから読み込むため、R上のオブジェクトをRMeCabTextに掛ける場合はtempfileで一時ファイルを作ってそれを読み込む形をとります。</p>
+<p>ということは、textの各要素についてRMeCabTextを行い、各結果のリストをflatten_chrして全部繋げてから10列のdata.frameにすれば欲しい結果が得られます。</p>
+<pre class="r"><code>res1 &lt;- text %&gt;% 
+  map(function(x){
+    tmp &lt;- tempfile()
+    write(x,tmp)
+    func &lt;- quietly(RMeCabText)
+    res &lt;- func(tmp)$result
+    
+    res_df &lt;- res %&gt;% 
+      flatten_chr() %&gt;% 
+      matrix(ncol=10,byrow=TRUE) %&gt;%
+      as.data.frame() %&gt;%
+      set_colnames(c(&quot;surface&quot;,&quot;pos&quot;,&quot;pos1&quot;,&quot;pos2&quot;,&quot;pos3&quot;,&quot;form1&quot;,&quot;form2&quot;,&quot;base&quot;,&quot;yomi&quot;,&quot;hatsuon&quot;))
+    
+    file.remove(tmp)
+    return(res_df)
+  }) %&gt;% 
+  # textの何番目の要素を形態素解析したかというidを付けておく
+  enframe(name=&quot;id&quot;,value=&quot;value&quot;) %&gt;% 
+  unnest(value) %&gt;%
+  as.data.frame()
+
+res1</code></pre>
+<pre><code>##    id surface    pos       pos1 pos2 pos3            form1  form2 base     yomi
+## 1   1    吾輩   名詞     代名詞 一般    *                *      * 吾輩 ワガハイ
+## 2   1      は   助詞     係助詞    *    *                *      *   は       ハ
+## 3   1      猫   名詞       一般    *    *                *      *   猫     ネコ
+## 4   1      で 助動詞          *    *    *         特殊・ダ 連用形   だ       デ
+## 5   1    ある 助動詞          *    *    *   五段・ラ行アル 基本形 ある     アル
+## 6   1      。   記号       句点    *    *                *      *   。       。
+## 7   2    名前   名詞       一般    *    *                *      * 名前   ナマエ
+## 8   2      は   助詞     係助詞    *    *                *      *   は       ハ
+## 9   2    まだ   副詞 助詞類接続    *    *                *      * まだ     マダ
+## 10  2    ない 形容詞       自立    *    * 形容詞・アウオ段 基本形 ない     ナイ
+## 11  2      。   記号       句点    *    *                *      *   。       。
+##     hatsuon
+## 1  ワガハイ
+## 2        ワ
+## 3      ネコ
+## 4        デ
+## 5      アル
+## 6        。
+## 7    ナマエ
+## 8        ワ
+## 9      マダ
+## 10     ナイ
+## 11       。</code></pre>
+<p>RMeCabTextは読み込んだファイルパスをコンソールに出力します。これはありがたいのですが、今回読み込んでいるのは一時ファイルであり、しかもtextの1要素ずつ一時ファイルを作っているためにコンソールの出力がすごい量になるので、purrr::quietlyを用いて出力しないようにしています。</p>
+<p>今形態素解析にかけたtextはベクトルでしたが、実際の分析では以下のようなdata.frameの場合もよくあります。</p>
+<pre class="r"><code>df &lt;- data.frame(sentence_id=1:2,text=text)
+df</code></pre>
+<pre><code>##   sentence_id             text
+## 1           1 吾輩は猫である。
+## 2           2 名前はまだない。</code></pre>
+<p>その場合でも、一発でtext列と紐付いた結果が得られますね。</p>
+<pre class="r"><code>left_join(df,res1,by=c(&quot;sentence_id&quot;=&quot;id&quot;)) %&gt;% 
+  head(3)</code></pre>
+<pre><code>##   sentence_id             text surface  pos   pos1 pos2 pos3 form1 form2 base
+## 1           1 吾輩は猫である。    吾輩 名詞 代名詞 一般    *     *     * 吾輩
+## 2           1 吾輩は猫である。      は 助詞 係助詞    *    *     *     *   は
+## 3           1 吾輩は猫である。      猫 名詞   一般    *    *     *     *   猫
+##       yomi  hatsuon
+## 1 ワガハイ ワガハイ
+## 2       ハ       ワ
+## 3     ネコ     ネコ</code></pre>
+<p>このような綺麗な形式のdata.frameが得られると、その後の分析が楽になりますね。</p>
+</div>
+<div id="語と品詞だけあればよい場合" class="section level2">
+<h2>語と品詞だけあればよい場合</h2>
+<p>品詞細分類などの列は不要であり、形態素解析された語と品詞の列だけあれば十分という場合も多いです。</p>
+<p>この場合、上記のコードを実行後にselectで必要な列のみ選択してもいいのですが、以下のRMeCabCを用いる方法もあります。</p>
+<p>RMeCabCはベクトルを引数に取り、以下のような返り値を返します。</p>
+<pre class="r"><code>RMeCabC(text[1]) %&gt;%
+  head(3)</code></pre>
+<pre><code>## [[1]]
+##   名詞 
+## &quot;吾輩&quot; 
+## 
+## [[2]]
+## 助詞 
+## &quot;は&quot; 
+## 
+## [[3]]
+## 名詞 
+## &quot;猫&quot;</code></pre>
+<p>ということは、flatten_chrすれば、分かち書きされた結果のベクトルに、品詞情報が名前として付いた名前付きベクトルが得られるので、以下のようにすれば欲しい結果が得られます。</p>
+<pre class="r"><code>res2 &lt;- text %&gt;% 
+  map(function(x){
+    mecab_raw &lt;- RMeCabC(x)
+    mecab_vec &lt;- flatten_chr(mecab_raw)
+    mecab_df &lt;- data.frame(surface=mecab_vec,pos=names(mecab_vec))
+    return(mecab_df)
+  }) %&gt;% 
+  enframe(name=&quot;id&quot;,value=&quot;value&quot;) %&gt;% 
+  unnest(value) %&gt;%
+  as.data.frame()
+
+res2 %&gt;% 
+  head</code></pre>
+<pre><code>##   id surface    pos
+## 1  1    吾輩   名詞
+## 2  1      は   助詞
+## 3  1      猫   名詞
+## 4  1      で 助動詞
+## 5  1    ある 助動詞
+## 6  1      。   記号</code></pre>
+<p>形態素解析にかけたいtextがdata.frameの形式の場合でも、先の例と同様にすれば結果が得られます。</p>
+<p>purrr様々ですね。</p>
+</div>
+<div id="tidy-text" class="section level2">
+<h2>tidy text</h2>
+<p>tidy textという概念があります。tidy textについては以下の書籍が詳しいです。</p>
+<p><a href="https://www.amazon.co.jp/R%E3%81%AB%E3%82%88%E3%82%8B%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%83%9E%E3%82%A4%E3%83%8B%E3%83%B3%E3%82%B0-%E2%80%95tidytext%E3%82%92%E6%B4%BB%E7%94%A8%E3%81%97%E3%81%9F%E3%83%87%E3%83%BC%E3%82%BF%E5%88%86%E6%9E%90%E3%81%A8%E5%8F%AF%E8%A6%96%E5%8C%96%E3%81%AE%E5%9F%BA%E7%A4%8E-Julia-Silge/dp/4873118301">Rによるテキストマイニング ―tidytextを活用したデータ分析と可視化の基礎</a></p>
+<p>これは、以下の英語の原文を和訳したものです。</p>
+<p><a href="https://www.tidytextmining.com/">Text Mining with R</a></p>
+<p>原文の第1章冒頭で、tidy textは以下のように定義されています。</p>
+<blockquote>
+<p>“We thus define the tidy text format as being a table with one-token-per-row. A token is a meaningful unit of text, such as a word, that we are interested in using for analysis, and tokenization is the process of splitting text into tokens.”</p>
+</blockquote>
+<p>1行につき1トークン（単語や形態素など）のdata.frameの形でトークンが記載されているデータのことです。この記事で紹介した方法では、形態素解析の結果がtidy textな形式で得られるので、その後のデータの加工が容易になるというメリットがあります。</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
