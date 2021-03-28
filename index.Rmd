@@ -1,0 +1,14 @@
+---
+title: "データ分析結果の置き場"
+author: "suzuna"
+date: "2021-03-28"
+output: 
+  html_document
+---
+
+日々のデータ分析の結果を記したRMarkdownの置き場です。
+
+[About](./about.html)
+
+
+- 2021/02/28 [コサイン類似度を用いて似ているエロゲをレコメンドする](./eroge_similarity.html)

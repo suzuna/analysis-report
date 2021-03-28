@@ -1,0 +1,12 @@
+# https://bookdown.org/yihui/rmarkdown/html-document.html#table-of-contents
+# https://qiita.com/kazutan/items/726e03dfcef1615ae999
+html_document:
+  self_contained: false
+  lib_dir: libs
+  toc: false
+  toc_depth: 1
+  number_sections: false
+  css: main.css
+  keep_md: false
+  includes:
+    in_header: in_header.html
