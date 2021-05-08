@@ -11,7 +11,6 @@ output: html_document
 日々のデータ分析などの結果を記したRMarkdownの置き場です。記事中に記載がない限り、記事内のコードはRです。
 
 ## データ分析
-- 2021/02/28 [コサイン類似度を用いて似ているエロゲをレコメンドする](./posts/eroge_similarity.html)
 
 ## 小ネタ
 - 2021/02/18 [RMarkdownにhighlight.jsのcssテーマを適用する](./posts/rmarkdown_highlightjs_css.html)
