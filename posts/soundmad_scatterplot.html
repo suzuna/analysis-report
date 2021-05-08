@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="" />
+
+<meta name="date" content="2021-05-05" />
+
+<title>ニコニコ動画のアニメ系音MADにおけるタグ別のマイリスト数/コメント数比率</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<script src="libs/navigation-1.1/codefolding.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+<link rel="stylesheet" href="main.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">ニコニコ動画のアニメ系音MADにおけるタグ別のマイリスト数/コメント数比率</h1>
+<h4 class="date">2021-05-05</h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#概要">概要</a></li>
+<li><a href="#apiを用いたニコニコ動画のデータの取得">APIを用いたニコニコ動画のデータの取得</a></li>
+<li><a href="#投稿年別の動画本数">投稿年別の動画本数</a></li>
+<li><a href="#マイリスト数再生数とマイリスト数コメント数の分布">マイリスト数/再生数とマイリスト数/コメント数の分布</a></li>
+<li><a href="#補足">補足</a></li>
+</ul>
+</div>
+
+<div id="概要" class="section level2">
+<h2>概要</h2>
+<p>ニコニコ動画においては、一般に、<a href="https://dic.nicovideo.jp/a/%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88%3C%E3%83%9E%E3%82%A4%E3%83%AA%E3%82%B9%E3%83%88">動画のマイリスト数がコメント数を上回っている</a>動画は、埋もれた名作である可能性があるとされています。</p>
+<p>私は<a href="https://dic.nicovideo.jp/a/%E9%9F%B3mad">音MAD</a>、特にアニメ系の音MAD（アニメのキャラクターの会話などを切り貼りして別の音楽のリズムに乗せた二次創作の動画）をよく視聴するのですが、このジャンルにおいては多くの動画でマイリスト数がコメント数を上回り、マイリスト数がコメント数の2倍付く動画も珍しくないという印象を持っていました。</p>
+<p>そこで、ニコニコ動画のスナップショット検索APIを叩くことで、ニコニコ動画における再生数が5000以上のアニメ系音MADの各動画の再生数、マイリスト数、コメント数を取得しました。そして、動画のタグごとにマイリスト数/再生数とマイリスト数/コメント数の中央値を集計しました。</p>
+<p>その結果、一部のタグのアニメ系音MADでは、マイリスト数/コメント数の中央値が2を超えることが分かりました。これはすなわち、そのタグが付いているアニメ系音MADにおいては、マイリスト数がコメント数の2倍あるというのが「平均的」であるということを意味します。</p>
+<p>なお以降、音MADとは「音MAD」をタグに持つ動画、アニメ系音MADとは、音MADのうち、ジャンルが「アニメ」である動画と定義します。</p>
+</div>
+<div id="apiを用いたニコニコ動画のデータの取得" class="section level2">
+<h2>APIを用いたニコニコ動画のデータの取得</h2>
+<p>ニコニコ動画から提供されている<a href="https://site.nicovideo.jp/search-api-docs/snapshot">スナップショット検索API</a>を用いると、キーワードやフィルタ条件に当てはまる動画について、再生数やマイリスト数、コメント数などのメタ情報を取得できます。なお、APIのデータの更新頻度は日次です。このAPIを叩くことで、「音MAD」のタグを持つ動画の一覧を取得します。</p>
+<p>APIを叩いたのが2021/3/27であるため、以下で使用するのは2021/3/27時点のデータです。</p>
+<p>APIの仕様上、APIへのアクセス1回で取得できる動画情報の動画数は100件までで、最大100000件までoffsetすることができます。今回取得したい「音MAD」のタグを持つ動画は全部で90200件程度あるので、再生回数を降順ソートした結果を一度に100件ずつ取得し、offsetで100件ずつずらして繰り返し取得することで全ての結果を取得できます。APIを叩くときは毎回10秒のスリープを入れています。</p>
+<pre class="r"><code>library(tidyverse)
+library(lubridate)
+library(jsonlite)
+library(xml2)
+library(ggrepel)
+
+# 指数表記（100000を1e+5と表記する）を避ける
+options(scipen = 100)
+
+# APIに渡すクエリパラメータ
+q &lt;- str_glue(&quot;&amp;q={xml2::url_escape(&#39;音MAD&#39;)}&quot;)
+targets &lt;- &quot;&amp;targets=tagsExact&quot;
+fields &lt;- &quot;&amp;fields=contentId,title,description,viewCounter,mylistCounter,lengthSeconds,thumbnailUrl,startTime,lastResBody,commentCounter,lastCommentTime,categoryTags,tags,genre&quot;
+filters &lt;- &quot;&quot;
+jsonFilter &lt;- &quot;&quot;
+sort &lt;- &quot;&amp;_sort=-viewCounter&quot;
+limit &lt;- &quot;&amp;_limit=100&quot;
+context &lt;- &quot;&amp;_context=apiguide&quot;
+
+# 「音MAD」でタグ検索をすると90200件程度ヒットするので、91000としておく
+max_count &lt;- 91000
+
+# 余談：GETのクエリパラメータなので、各パラメータをhttr::GET(url=endpointのURL,query=list(各クエリパラメータの名前=各クエリパラメータの値))としたいが、
+# APIの仕様上、filtersパラメータは他のパラメータと異なり、&quot;filters=...&quot;という形式ではなく、&quot;filters[viewCounter][0]=1000000&quot;のような形式なので、その方法は使えないと思う
+# （本分析ではfiltersパラメータを与えていないのでその方法は使えるが）
+# そのため、各クエリパラメータを文字列で連結してURLを作る古典的な方法を取っている
+url &lt;- map_chr(seq(0,max_count,100),~{
+  offset &lt;- str_glue(&quot;&amp;_offset={.x}&quot;)
+  url &lt;- str_glue(&quot;https://api.search.nicovideo.jp/api/v2/snapshot/video/contents/search?{q}{targets}{fields}{filters}{jsonFilter}{sort}{offset}{limit}{context}&quot;)
+})
+res &lt;- url %&gt;% 
+  map(~{
+    Sys.sleep(10)
+    tryCatch({
+      cat(str_glue(&quot;{Sys.time()} {.x}&quot;),&quot;\n&quot;)
+      return(jsonlite::fromJSON(.x))
+    },error=function(e){
+      print(.x)
+      print(e)
+      return(NULL)
+    })
+  })
+df &lt;- res %&gt;% 
+  map_dfr(&quot;data&quot;) %&gt;% 
+  mutate(across(c(startTime,lastCommentTime),as.POSIXct))</code></pre>
+<p>APIを用いると、このような行が各動画であるdata.frameが得られます（行と列が多いので一部のみ抜粋します）。</p>
+<pre class="r"><code>df %&gt;% 
+  filter(genre==&quot;アニメ&quot;) %&gt;% 
+  arrange(desc(viewCounter)) %&gt;% 
+  select(mylistCounter,viewCounter,commentCounter,title,genre,startTime,tags,contentId) %&gt;% 
+  head(1) %&gt;% 
+  knitr::kable(.)</code></pre>
+<table>
+<colgroup>
+<col width="4%" />
+<col width="4%" />
+<col width="5%" />
+<col width="16%" />
+<col width="2%" />
+<col width="7%" />
+<col width="55%" />
+<col width="3%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">mylistCounter</th>
+<th align="right">viewCounter</th>
+<th align="right">commentCounter</th>
+<th align="left">title</th>
+<th align="left">genre</th>
+<th align="left">startTime</th>
+<th align="left">tags</th>
+<th align="left">contentId</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">57054</td>
+<td align="right">5954562</td>
+<td align="right">163684</td>
+<td align="left">ねずみフレンズ　～ようこそディズニーランドへ～</td>
+<td align="left">アニメ</td>
+<td align="left">2017-02-26 18:41:23</td>
+<td align="left">アニメ おとまっどちほー けものフレンズ ディズニー ディズニーMAD ニコニコディズニーツアー ミッキーマウス ようこそジャパリパークへ 投稿者コメント 音MAD 音系MAD</td>
+<td align="left">sm30717222</td>
+</tr>
+</tbody>
+</table>
+<p>以降、投稿日が2020/12/31までの動画のみを分析対象とします。</p>
+<pre class="r"><code>df &lt;- df %&gt;% 
+  mutate(date=as.Date(startTime,tz=&quot;Asia/Tokyo&quot;)) %&gt;% 
+  mutate(year=as.factor(lubridate::year(date))) %&gt;% 
+  filter(date&lt;=as.Date(&quot;2020-12-31&quot;))</code></pre>
+</div>
+<div id="投稿年別の動画本数" class="section level2">
+<h2>投稿年別の動画本数</h2>
+<p>音MADとアニメ系音MADの動画の本数の規模感を掴むために、まずは音MADとそのうちアニメ系音MADの、投稿年別の動画の本数を示します。“anime”はアニメ系音MADの本数、“all”は音MADの本数、“percent”はアニメ系音MADの本数/音MADの本数（%）を指します。</p>
+<pre class="r"><code>full_join(
+  df %&gt;% 
+    filter(genre==&quot;アニメ&quot;) %&gt;%
+    count(year,name=&quot;anime&quot;),
+  df %&gt;% 
+    count(year,name=&quot;all&quot;),
+  by=&quot;year&quot;
+) %&gt;% 
+  mutate(percent=anime/all*100)</code></pre>
+<pre><code>## # A tibble: 14 x 4
+##    year  anime   all percent
+##    &lt;fct&gt; &lt;int&gt; &lt;int&gt;   &lt;dbl&gt;
+##  1 2007     38   232   16.4 
+##  2 2008    186  1276   14.6 
+##  3 2009    279  2112   13.2 
+##  4 2010    731  3778   19.3 
+##  5 2011   1288  5015   25.7 
+##  6 2012   1420  5785   24.5 
+##  7 2013   1260  5005   25.2 
+##  8 2014   1004  4774   21.0 
+##  9 2015   1076  5803   18.5 
+## 10 2016    913  7629   12.0 
+## 11 2017   1068  8860   12.1 
+## 12 2018    839  9451    8.88
+## 13 2019   1065 10762    9.90
+## 14 2020   1382 15560    8.88</code></pre>
+<p>以下のことが分かります。</p>
+<ul>
+<li>アニメ系音MADは年1000本程度投稿されている</li>
+<li>音MAD全体の投稿数は年々増加し、2020年では約15000本投稿された</li>
+<li>その結果、アニメ系音MADは2010年代前半は音MAD全体の1/4を占めていたが、最近では10%程度に留まる</li>
+</ul>
+</div>
+<div id="マイリスト数再生数とマイリスト数コメント数の分布" class="section level2">
+<h2>マイリスト数/再生数とマイリスト数/コメント数の分布</h2>
+<p>アニメ系音MADのうち、再生数が5000以上（※後述）の動画のみを以降の分析に用います。</p>
+<p>その各動画において、マイリスト数/再生数とマイリスト数/コメント数を計算します。そして、動画のタグごとのそれらの中央値を算出します。これによって、各タグの動画におけるマイリスト数/再生数とマイリスト数/コメント数の「平均的な値<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>」を求めることができます。</p>
+<p>※：再生数が少ない動画はマイリスト数とコメント数も少ないです。その場合、マイリスト数とコメント数の多少の値の違いがマイリスト数/再生数とマイリスト数/コメント数の値に大きく影響を及ぼすので、再生数を5000以上に限定しています。5000という数字は、再生数が5000回あれば一定程度視聴された動画と言えるであろうという、一ニコニコ動画ユーザとしての私の印象に基づきます。</p>
+<pre class="r"><code>df_anime &lt;- df %&gt;% 
+  filter(genre==&quot;アニメ&quot;)
+
+# APIの仕様上、各動画のタグが半角スペースで連結されているので、1行1タグに分割したdata.frameを用意する
+df_anime_split &lt;- df_anime %&gt;% 
+  mutate(tags_split=str_split(tags,&quot; &quot;)) %&gt;% 
+  unnest(tags_split)
+
+res &lt;- df_anime_split %&gt;% 
+  # アニメ系音MADにアニメや音(MAD|mad|音ＭＡＤ)というタグが付いているのはある種当たり前で分析に役立たないから
+  # MADという文字列が含まれるタグは「のんのんびよりMAD」などであり、「のんのんびより」という別のタグとほぼ等価であるから
+  filter(!tags_split %in% c(&quot;アニメ&quot;,&quot;音MAD&quot;,&quot;音mad&quot;,&quot;音ＭＡＤ&quot;),
+         str_detect(tags_split,&quot;MAD&quot;,negate=T)) %&gt;%
+  filter(viewCounter&gt;=5000) %&gt;% 
+  mutate(
+    mc_prop=mylistCounter/commentCounter,
+    mv_prop=mylistCounter/viewCounter,
+    cv_prop=commentCounter/viewCounter
+  ) %&gt;% 
+  group_by(tags_split) %&gt;% 
+  summarize(
+    mc_q50=median(mc_prop,na.rm=T),
+    mv_q50=median(mv_prop,na.rm=T),
+    cv_q50=median(cv_prop,na.rm=T),
+    v_q50=median(viewCounter,na.rm=T),
+    c_q50=median(commentCounter,na.rm=T),
+    m_q50=median(mylistCounter,na.rm=T),
+    n=n(),
+    .groups=&quot;drop&quot;
+  ) %&gt;% 
+  arrange(desc(n))</code></pre>
+<p>各動画のマイリスト数/再生数とマイリスト数/コメント数を、タグごとに集計して、前者を横軸、後者を縦軸に取って散布図を書いたものが下図です。ただし図示しているのは、タグごとの再生数が5000以上である動画数の上位60位程度までのタグの中から私が選んだ40個のタグ（素材であるアニメ名や音楽名などを表すタグ）に絞っています<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>。かっこ内の数字はそのタグが付された動画の数です。</p>
+<p>例えば、「のんのんびより」のタグが付された再生数5000以上のアニメ系音MADは103本あり、マイリスト数/再生数の中央値は約1.5%、マイリスト数/コメント数の中央値は約230%であることを表します。</p>
+<pre class="r"><code># これらのタグについて図示する（並んでいる順番は動画数が多い順）
+tags_extract &lt;- c(
+  &quot;チャージマン研！&quot;,&quot;けものフレンズ&quot;,&quot;日常&quot;,&quot;ラブライブ！&quot;,&quot;マイムマイム&quot;,
+  &quot;危険な○○シリーズ&quot;,&quot;on_and_on&quot;,&quot;ジョジョの奇妙な冒険&quot;,&quot;きんいろモザイク&quot;,&quot;サンドキャニオン&quot;,
+  &quot;RED_ZONE&quot;,&quot;ブロリー&quot;,&quot;ゆるゆり&quot;,&quot;ゆゆ式&quot;,&quot;らき☆すた&quot;,
+  &quot;バカヤロイド&quot;,&quot;のんのんびより&quot;,&quot;ココロオドル&quot;,&quot;人力VOCALOID&quot;,&quot;魔法少女まどか☆マギカ&quot;,
+  &quot;おそ松さん&quot;,&quot;咲-Saki-&quot;,&quot;ご注文はうさぎですか？&quot;,&quot;グルメレース&quot;,&quot;キルミーベイベー&quot;,
+  &quot;アイドルマスター&quot;,&quot;ジョジョの奇妙な冒険（アニメ）&quot;,&quot;Z会&quot;,&quot;勉強シロイド&quot;,&quot;咲-Saki-阿知賀編episodeofside-A&quot;,
+  &quot;○○かわいいシリーズ&quot;,&quot;とある科学の超電磁砲&quot;,&quot;アイドルマスター_シンデレラガールズ&quot;,&quot;何もあげられるもの無いから○○を歌うよ&quot;,&quot;けいおん！&quot;,
+  &quot;とある魔術の禁書目録&quot;,&quot;ミルキィホームズ&quot;,&quot;遊戯王&quot;,&quot;冷やし○○シリーズ&quot;,&quot;てってってー&quot;
+)
+
+res %&gt;% 
+  filter(tags_split %in% tags_extract) %&gt;% 
+  mutate(label=str_glue(&quot;{tags_split}({n})&quot;)) %&gt;% 
+  ggplot(aes(mv_q50,mc_q50,label=label))+
+  geom_point(size=1)+
+  theme_light()+
+  ggrepel::geom_text_repel(size=2,max.overlaps=Inf)+
+  scale_x_continuous(breaks=seq(0,0.1,0.01),labels=scales::percent_format(accuracy=1))+
+  scale_y_continuous(breaks=seq(0,3.5,1),labels=scales::percent)+
+  labs(x=&quot;マイリスト数/再生数（各タグの中央値）&quot;,
+       y=&quot;マイリスト数/コメント数（各タグの中央値）&quot;)</code></pre>
+<p><img src="soundmad_scatterplot_files/figure-html/unnamed-chunk-7-1.png" width="100%" /></p>
+<p>図より、以下の内容が読み取れます。</p>
+<ul>
+<li>マイリスト数/再生数の中央値は、どのタグでも1～2%程度である</li>
+<li>マイリスト数/コメント数の中央値が100%を超えるタグが多く、200%を超えるタグも散見される</li>
+</ul>
+<p>とりわけゆゆ式が右上に飛び抜けていますね。マイリスト数/コメント数の中央値が約330%というのは驚きです。マイリスト数/コメント数が大きいゆゆ式、キルミーベイベー、のんのんびより、きんいろモザイク辺りのタグが付いている動画は、マイリスト数/コメント数が大きいのではないか？とアニメ系音MADを見て感じていたのですが、その感覚がデータで裏付けられた印象です<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>。この辺りの動画はコメントをするよりもマイリストに入れて作業用BGMのような形で流すという形で視聴されるような動画が多いのかもしれません。</p>
+<p>反対に、縦軸の下の方に点がある、すなわちマイリスト数/コメント数が小さいタグは、図の通りコメントが盛り上がるタイプのタグであるという印象があります。</p>
+</div>
+<div id="補足" class="section level2">
+<h2>補足</h2>
+<p>本分析で見た通りアニメ系音MADではマイリスト数/コメント数の中央値は100%を超えるタグが多かったですが、これはアニメ系音MADという分野がそうであっただけであり、全く異なる結果、すなわちマイリスト数がコメント数を上回らないのが普通という動画の分野も当然あると思われます。</p>
+<p>また、本分析では再生数が5000以上の動画に限定して分析しましたが、これを3000以上や10000以上などに変更したとしても、得られる結果に大きな差はありません。マイリスト数/コメント数やマイリスト数/再生数の値が若干変わる程度であり、それらの値のタグ間での大小が大きく変わる、すなわち、再生数が5000以上の動画に限定した本分析ではマイリスト数/コメント数が非常に大きいタグが、再生数が3000以上の動画に変更すると非常に小さくなる、というようなことはありませんでした。</p>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>「平均的な値」と言いつつ平均値ではなく中央値を使っているのは、マイリスト数/再生数とマイリスト数/コメント数の分布は左右対称ではないからです。大ざっぱに言うと、前者は左裾が0、右裾が0.1、中央値が0.01のような感じの分布です。後者も同様に左右対称ではありません。<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>タグの動画数の上位を全部図示すると、他のタグと意味が被るタグが複数含まれてしまうので、そのようなタグを目視で除外する必要があります。<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>その感覚が本当であるか確かめてみたかったというのが、この分析を行おうと思った理由です。<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
