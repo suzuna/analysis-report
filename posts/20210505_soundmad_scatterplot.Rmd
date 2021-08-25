@@ -51,7 +51,7 @@ APIを叩いたのが2021/3/27であるため、以下で使用するのは2021/
 APIの仕様上、APIへのアクセス1回で取得できる動画情報の動画数は100件までで、最大100000件までoffsetすることができます。今回取得したい「音MAD」のタグを持つ動画は全部で90200件程度あるので、再生回数を降順ソートした結果を一度に100件ずつ取得し、offsetで100件ずつずらして繰り返し取得することで全ての結果を取得できます。APIを叩くときは毎回10秒のスリープを入れています。
 
 ```{r,include=FALSE,results="hide"}
-df <- read_csv(here("data/音mad_20210327.csv"),locale=locale(tz="Asia/Tokyo"))
+df <- read_csv(here("data/from_niconico_api/otomad_20210327.csv"),locale=locale(tz="Asia/Tokyo"))
 ```
 
 ```{r,eval=FALSE}
@@ -77,10 +77,6 @@ context <- "&_context=apiguide"
 # 「音MAD」でタグ検索をすると90200件程度ヒットするので、91000としておく
 max_count <- 91000
 
-# 余談：GETのクエリパラメータなので、各パラメータをhttr::GET(url=endpointのURL,query=list(各クエリパラメータの名前=各クエリパラメータの値))としたいが、
-# APIの仕様上、filtersパラメータは他のパラメータと異なり、"filters=..."という形式ではなく、"filters[viewCounter][0]=1000000"のような形式なので、filtersパラメータが空ではない場合その方法ではデータを取得できないと思う
-# （本分析ではfiltersパラメータを与えていないのでhttr::GETでも問題ない）
-# そのため、各クエリパラメータを文字列で連結してURLを作る方法を取っている
 url <- map_chr(seq(0,max_count,100),~{
   offset <- str_glue("&_offset={.x}")
   url <- str_glue("https://api.search.nicovideo.jp/api/v2/snapshot/video/contents/search?{q}{targets}{fields}{filters}{jsonFilter}{sort}{offset}{limit}{context}")
