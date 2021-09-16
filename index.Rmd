@@ -1,7 +1,9 @@
 ---
 title: "データ分析のレポート置き場"
+author: ""
 date: ""
-output: html_document
+output: 
+  html_document
 ---
 
 ---
@@ -10,11 +12,31 @@ output: html_document
 
 日々のデータ分析などの結果を記したRMarkdownの置き場です。記事中に記載がない限り、記事内のコードはRです。
 
-## データ分析
+## 作ったもの
+
+### データ分析
+
 - 2021/05/05 [ニコニコ動画のアニメ系音MADにおけるタグ別のマイリスト数/コメント数比率](./posts/20210505_soundmad_scatterplot.html)
   - ニコニコ動画のスナップショット検索APIを用いてアニメ系音MADの再生数、マイリスト数、コメント数を取得し、マイリスト数/コメント数が大きい傾向にあるタグを調べました。
 
+### Webアプリ
+
+- [ニコニコ検索](https://suzuna.shinyapps.io/niconico_search/)
+  - ニコニコ動画の検索Webアプリです。
+  - 公式では行えない、再生数などのフィルタ条件を付けた検索や、マイリスト率の高い順に結果を表示するような検索ができます。
+  - Shinyで実装しています。裏側ではニコニコ動画のAPIを叩いています。
+- [ITnewsheader](https://suzuna.shinyapps.io/itnewsheader/)
+  - ITニュースサイトより、最新のITニュース一覧を表示します。
+  - 上記のWebアプリ（Shinyで実装）と、ローカルでhtmlファイルを生成するコードの両方のバージョンがあります。
+  - 対応しているサイトはITmedia、日経xtech、ASCII、Impressです。（ただし、日経xtechは上記のWebアプリ版では表示されません。恐らくshinyapps.ioのサーバのリージョンの問題？）
+  - DataTablesの機能により、任意の文字列でニュースタイトルを検索することが可能です。
+  
+### ライブラリ
+- [mecabtools](https://github.com/suzuna/mecabtools)
+  - RMeCabの出力をtidy textなdata.frameとして返すRのパッケージです。
+
 ## 小ネタ
-- 2021/02/18 [RMarkdownにhighlight.jsのcssテーマを適用する](./posts/20210218_rmarkdown_highlightjs_css.html)
-- 2021/02/08 [RMeCabで形態素解析した結果をtidy textなdata.frameで取得する](./posts/20210208_rmecab_tidy_text_result.html)
+
 - 2020/04/30 [タイムゾーンを指定した時のlubridate::parse_date_timeとlubridate::parse_date_time2の速度の違い](./posts/20200430_parse_date_time.html)
+- 2021/02/08 [RMeCabで形態素解析した結果をtidy textなdata.frameで取得する](./posts/20210208_rmecab_tidy_text_result.html)
+- 2021/02/18 [RMarkdownにhighlight.jsのcssテーマを適用する](./posts/20210218_rmarkdown_highlightjs_css.html)

@@ -2,7 +2,4 @@ html_document:
   self_contained: false
   lib_dir: libs
   toc: false
-  toc_depth: 1
-  number_sections: false
   css: main.css
-  keep_md: false

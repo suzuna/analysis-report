@@ -13,6 +13,7 @@
 
 <title>データ分析のレポート置き場</title>
 
+<script src="libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -164,6 +165,7 @@ pre code {
 
 
 <h1 class="title toc-ignore">データ分析のレポート置き場</h1>
+<h4 class="author"></h4>
 
 </div>
 
@@ -171,8 +173,10 @@ pre code {
 <hr />
 <p><a href="./about.html">About</a> <a href="https://github.com/suzuna">GitHub</a></p>
 <p>日々のデータ分析などの結果を記したRMarkdownの置き場です。記事中に記載がない限り、記事内のコードはRです。</p>
-<div id="データ分析" class="section level2">
-<h2>データ分析</h2>
+<div id="作ったもの" class="section level2">
+<h2>作ったもの</h2>
+<div id="データ分析" class="section level3">
+<h3>データ分析</h3>
 <ul>
 <li>2021/05/05 <a href="./posts/20210505_soundmad_scatterplot.html">ニコニコ動画のアニメ系音MADにおけるタグ別のマイリスト数/コメント数比率</a>
 <ul>
@@ -180,12 +184,40 @@ pre code {
 </ul></li>
 </ul>
 </div>
+<div id="webアプリ" class="section level3">
+<h3>Webアプリ</h3>
+<ul>
+<li><a href="https://suzuna.shinyapps.io/niconico_search/">ニコニコ検索</a>
+<ul>
+<li>ニコニコ動画の検索Webアプリです。</li>
+<li>公式では行えない、再生数などのフィルタ条件を付けた検索や、マイリスト率の高い順に結果を表示するような検索ができます。</li>
+<li>Shinyで実装しています。裏側ではニコニコ動画のAPIを叩いています。</li>
+</ul></li>
+<li><a href="https://suzuna.shinyapps.io/itnewsheader/">ITnewsheader</a>
+<ul>
+<li>ITニュースサイトより、最新のITニュース一覧を表示します。</li>
+<li>上記のWebアプリ（Shinyで実装）と、ローカルでhtmlファイルを生成するコードの両方のバージョンがあります。</li>
+<li>対応しているサイトはITmedia、日経xtech、ASCII、Impressです。（ただし、日経xtechは上記のWebアプリ版では表示されません。恐らくshinyapps.ioのサーバのリージョンの問題？）</li>
+<li>DataTablesの機能により、任意の文字列でニュースタイトルを検索することが可能です。</li>
+</ul></li>
+</ul>
+</div>
+<div id="ライブラリ" class="section level3">
+<h3>ライブラリ</h3>
+<ul>
+<li><a href="https://github.com/suzuna/mecabtools">mecabtools</a>
+<ul>
+<li>RMeCabの出力をtidy textなdata.frameとして返すRのパッケージです。</li>
+</ul></li>
+</ul>
+</div>
+</div>
 <div id="小ネタ" class="section level2">
 <h2>小ネタ</h2>
 <ul>
-<li>2021/02/18 <a href="./posts/20210218_rmarkdown_highlightjs_css.html">RMarkdownにhighlight.jsのcssテーマを適用する</a></li>
-<li>2021/02/08 <a href="./posts/20210208_rmecab_tidy_text_result.html">RMeCabで形態素解析した結果をtidy textなdata.frameで取得する</a></li>
 <li>2020/04/30 <a href="./posts/20200430_parse_date_time.html">タイムゾーンを指定した時のlubridate::parse_date_timeとlubridate::parse_date_time2の速度の違い</a></li>
+<li>2021/02/08 <a href="./posts/20210208_rmecab_tidy_text_result.html">RMeCabで形態素解析した結果をtidy textなdata.frameで取得する</a></li>
+<li>2021/02/18 <a href="./posts/20210218_rmarkdown_highlightjs_css.html">RMarkdownにhighlight.jsのcssテーマを適用する</a></li>
 </ul>
 </div>
 
