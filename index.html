@@ -13,8 +13,8 @@
 
 <title>データ分析のレポート置き場</title>
 
-<script src="libs/header-attrs-2.10/header-attrs.js"></script>
-<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
 <script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -187,18 +187,16 @@ pre code {
 <div id="webアプリ" class="section level3">
 <h3>Webアプリ</h3>
 <ul>
-<li><a href="https://suzuna.shinyapps.io/niconico_search/">ニコニコ検索</a>
+<li><a href="https://github.com/suzuna/niconico_search">ニコニコ検索</a>
 <ul>
-<li>ニコニコ動画の検索Webアプリです。</li>
-<li>公式では行えない、再生数などのフィルタ条件を付けた検索や、マイリスト率の高い順に結果を表示するような検索ができます。</li>
+<li>ニコニコ動画を検索するWebアプリです。</li>
+<li>公式では行えない、再生数などに上限、下限を設定したり、マイリスト率やマイリスト率/コメント率などの大小でソートして結果を表示する検索ができます。</li>
 <li>Shinyで実装しています。裏側ではニコニコ動画のAPIを叩いています。</li>
 </ul></li>
-<li><a href="https://suzuna.shinyapps.io/itnewsheader/">ITnewsheader</a>
+<li><a href="https://github.com/suzuna/ITnewsheader">ITnewsheader</a>
 <ul>
-<li>ITニュースサイトより、最新のITニュース一覧を表示します。</li>
-<li>上記のWebアプリ（Shinyで実装）と、ローカルでhtmlファイルを生成するコードの両方のバージョンがあります。</li>
-<li>対応しているサイトはITmedia、日経xtech、ASCII、Impressです。（ただし、日経xtechは上記のWebアプリ版では表示されません。恐らくshinyapps.ioのサーバのリージョンの問題？）</li>
-<li>DataTablesの機能により、任意の文字列でニュースタイトルを検索することが可能です。</li>
+<li>ITニュースサイト（ITmedia、日経xtech、ASCII、Impress）より、最新のITニュースタイトルの一覧を表示します。取得したニュースタイトルから検索することもできます。</li>
+<li>Shinyで実装しています。</li>
 </ul></li>
 </ul>
 </div>

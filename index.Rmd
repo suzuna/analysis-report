@@ -21,15 +21,13 @@ output:
 
 ### Webアプリ
 
-- [ニコニコ検索](https://suzuna.shinyapps.io/niconico_search/)
-  - ニコニコ動画の検索Webアプリです。
-  - 公式では行えない、再生数などのフィルタ条件を付けた検索や、マイリスト率の高い順に結果を表示するような検索ができます。
+- [ニコニコ検索](https://github.com/suzuna/niconico_search)
+  - ニコニコ動画を検索するWebアプリです。
+  - 公式では行えない、再生数などに上限、下限を設定したり、マイリスト率やマイリスト率/コメント率などの大小でソートして結果を表示する検索ができます。
   - Shinyで実装しています。裏側ではニコニコ動画のAPIを叩いています。
-- [ITnewsheader](https://suzuna.shinyapps.io/itnewsheader/)
-  - ITニュースサイトより、最新のITニュース一覧を表示します。
-  - 上記のWebアプリ（Shinyで実装）と、ローカルでhtmlファイルを生成するコードの両方のバージョンがあります。
-  - 対応しているサイトはITmedia、日経xtech、ASCII、Impressです。（ただし、日経xtechは上記のWebアプリ版では表示されません。恐らくshinyapps.ioのサーバのリージョンの問題？）
-  - DataTablesの機能により、任意の文字列でニュースタイトルを検索することが可能です。
+- [ITnewsheader](https://github.com/suzuna/ITnewsheader)
+  - ITニュースサイト（ITmedia、日経xtech、ASCII、Impress）より、最新のITニュースタイトルの一覧を表示します。取得したニュースタイトルから検索することもできます。
+  - Shinyで実装しています。
   
 ### ライブラリ
 - [mecabtools](https://github.com/suzuna/mecabtools)
