@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2021-09-12" />
+
+<title>ITmedia NEWSの全記事を用いてIT分野の流行語を調べた</title>
+
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<script src="libs/navigation-1.1/codefolding.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+<link rel="stylesheet" href="main.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">ITmedia NEWSの全記事を用いてIT分野の流行語を調べた</h1>
+<h4 class="author"></h4>
+<h4 class="date">2021-09-12</h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#概要">概要</a></li>
+<li><a href="#記事データ">記事データ</a></li>
+<li><a href="#tf-idf">TF-IDF</a></li>
+<li><a href="#実装">実装</a></li>
+<li><a href="#結果">結果</a></li>
+</ul>
+</div>
+
+<div id="概要" class="section level2">
+<h2>概要</h2>
+<p><a href="https://www.itmedia.co.jp/news/">ITmedia NEWS</a>の記事データについて、TF-IDFを用いて毎年の「その年のIT分野の世相を表す単語」をピックアップしました。</p>
+</div>
+<div id="記事データ" class="section level2">
+<h2>記事データ</h2>
+<p>まずは記事のテキストデータを入手する必要があります。</p>
+<p><a href="https://www.itmedia.co.jp/news/subtop/archive/">過去記事一覧</a>からスクレイピングで辿ることで、2004年1月以降の全ての記事を取得しました<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>。サーバに負荷がかからないよう、十分なスリープを挟みました。</p>
+<p>2004/1/7～2021/7/31において88638本の記事がありました。そのうち実際に取得できた記事は88249本でした。</p>
+<p>記事の日時、タイトル、本文、URLを取得しました。以降、このテキストデータを用いて分析を行います。</p>
+<pre><code>## # A tibble: 88,249 x 4
+##    datetime            title            content                 url             
+##    &lt;dttm&gt;              &lt;chr&gt;            &lt;chr&gt;                   &lt;chr&gt;           
+##  1 2004-01-07 13:15:00 “最薄”と“連~     薄型ボディに回転式レン~ https://www.itm~
+##  2 2004-01-07 15:02:00 世界初のSerial ~ 富士通は1月5日、Serial~ https://www.itm~
+##  3 2004-01-07 15:06:00 コニカミノルタ~  コニカミノルタビジネス~ https://www.itm~
+##  4 2004-01-07 15:09:00 Baniasコアの「C~ インテルは1月6日、ノー~ https://www.itm~
+##  5 2004-01-07 15:10:00 「モバイルAthlo~ 日本AMDは1月6日、64ビ~  https://www.itm~
+##  6 2004-01-07 15:16:00 ラジオたんぱ、P~ 日経ラジオ社（ラジオた~ https://www.itm~
+##  7 2004-01-07 15:22:00 年始、ロボット~  昨年のクリスマスを一人~ https://www.itm~
+##  8 2004-01-07 18:36:00 2004年の自作PC~  各ショップで口をそろえ~ https://www.itm~
+##  9 2004-01-08 08:52:00 ATI、3D対応の携~ グラフィックスチップメ~ https://www.itm~
+## 10 2004-01-08 10:56:00 Segwayに新社長   ハイテクスクーターの提~ https://www.itm~
+## # ... with 88,239 more rows</code></pre>
+</div>
+<div id="tf-idf" class="section level2">
+<h2>TF-IDF</h2>
+<p>本分析で求めたいのは、「他の年の記事にはあまり出てこないが、ある年の記事によく出てきた単語」です。本分析では、この度合いを示す指標としてTF-IDFを用います。</p>
+<p>ある文書にはあまり出現しないが他のある文書にはよく出現する単語は大きな値を取る性質があり、特徴語の特徴量としてよく用いられます。</p>
+<p>文書<span class="math inline">\(j\)</span>における単語<span class="math inline">\(i\)</span>のTF-IDFは、TF（Term Frequency、単語の出現頻度）とIDF（Inverse Document Frequency、逆文書頻度）の積で表され、下記の通り求められます。</p>
+<p><span class="math display">\[
+\begin{align}
+tfidf_{i,j} &amp;= tf_{i,j} \cdot idf_{i} \\
+tf_{i,j} &amp;= \frac{文書jにおける単語iの出現回数} {文書jにおける全ての単語の出現回数の和} \\
+idf_{i} &amp;= \log \frac{総文書数}{単語iが出現する文書数}
+\end{align}
+\]</span></p>
+<p>本分析では、文書カテゴリ（上での<span class="math inline">\(j\)</span>）は投稿日の年数（2004年～2021年）です。すなわち、2004年に投稿されたニュース群、2005年に投稿されたニュース群、…、2021年に投稿されたニュース群というように、18個の文書カテゴリがあります。</p>
+<p>なお、TFとIDFの定義は、上記以外に色々あります。（例えば<a href="https://yukinoi.hatenablog.com/entry/2016/11/12/231422">いろんなtf-idf</a>）今回は他にも、TFの2値化や、IDFを単語iが出現する文書数+1の自然対数としたバージョンも試してみましたが、結果がよくなかったため割愛します。<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>Rでは、tidytext::bind_tf_idfを用いてTF-IDFが求められます。ただ、実装は特に難しくありませんので、自分の理解を兼ねてtidyverseでの集計によって一から実装しました。なお、tidytext::bind_tf_idfは上記の数式の通りの最もオーソドックスなTF-IDFの算出法しか実装されていませんので、他の方法でのTF-IDFを求めたい場合は一から実装する必要があります。</p>
+</div>
+<div id="実装" class="section level2">
+<h2>実装</h2>
+<p>実装は下記の通りになります。</p>
+<ul>
+<li>前処理
+<ul>
+<li>記事中に含まれる年月日や、かっこ内の語を削除する
+<ul>
+<li>かっこ内の語は、その前にある単語の略語のことが多いです。その略す前の単語と略した後の単語で同じ意味の単語が2個結果に入ってしまうので、削除しました。</li>
+</ul></li>
+<li><a href="https://github.com/neologd/mecab-ipadic-neologd/wiki/Regexp">neologdベース</a>での正規化を行う
+<ul>
+<li>NFKC正規化の後に、各種文字を正規化します。</li>
+<li><a href="https://github.com/uribo/zipangu">zipangu::str_jnormalize</a>を用いています。Pythonの<a href="https://github.com/ikegami-yukino/neologdn">neologdn.normalize</a>と同じです。</li>
+</ul></li>
+<li>前処理とは少し違いますが、記事の投稿年（“2004”-“2021”）を各ニュースに付与します。</li>
+</ul></li>
+<li>形態素解析
+<ul>
+<li>RMeCabに、新語・固有表現に強い<a href="https://github.com/neologd/mecab-ipadic-neologd">mecab-ipadic-NEologd</a>を用いています。実際は、RMeCabの出力を扱いやすくtidyにする自作パッケージ<a href="https://github.com/suzuna/mecabtools">mecabtools</a>を用いています。
+<ul>
+<li>mecab-ipadic-NEologdですが、GitHubを見る限りどうやら2020年9月で更新が止まっているようです。更新停止後に出てきた最近の単語は分かち書きできませんね。</li>
+</ul></li>
+<li><a href="https://github.com/DavisVaughan/furrr">furrr::future_map</a>を用いて並列化しています。Core i9-9900K、メモリ64GBの私の環境では数分程度で終わりました。</li>
+</ul></li>
+<li>TF-IDF算出
+<ul>
+<li>数詞以外の名詞のうち、全てのニュースの中で30回以上出現している単語のみにしました。</li>
+</ul></li>
+<li>結果
+<ul>
+<li>各年（＝文書カテゴリ）のTF-IDFの上位10単語を選びました。</li>
+</ul></li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+library(lubridate)
+# remotes::install_github(&quot;suzuna/mecabtools&quot;)
+library(mecabtools)
+# CRAN版ではなくGitHubにある開発版を入れる（2022/1/30時点では、zipangu::str_jnormalizeがCRAN版（v0.2.3）にはないため）
+# remotes::install_github(&quot;uribo/zipangu&quot;)
+library(zipangu)
+library(here)
+library(furrr)
+
+
+# 事前に集めたデータを読み込む -------------------------------------------------------------------
+article &lt;- read_csv(here(&quot;data/ITmedia_news_article_0401_2107.csv&quot;),locale=locale(tz=&quot;Asia/Tokyo&quot;)) %&gt;% 
+  arrange(datetime)
+
+
+# 前処理する -------------------------------------------------------------------
+df &lt;- article %&gt;% 
+  mutate(content=str_remove_all(content,&quot;&lt;p&gt;&quot;)) %&gt;% 
+  # かっこ内の単語を削除（かっこ内の単語は前の単語の略語のことが多いため、同じ意味を持つ略す前の単語と略語が重複するから）
+  mutate(content=str_remove_all(content,&quot;（[^）]*）&quot;)) %&gt;% 
+  # 記事中の年月日は削除
+  mutate(content=str_remove_all(content,&quot;[0-9]+(年|年度|月|日)&quot;)) %&gt;% 
+  mutate(content=zipangu::str_jnormalize(content)) %&gt;% 
+  # このyearが、文書カテゴリ
+  mutate(year=lubridate::year(datetime),id=str_extract(url,&quot;[0-9]{4}/[0-9]{2}/news[0-9]+&quot;)) %&gt;% 
+  select(id,year,title,content,url)
+
+
+# 形態素解析 -------------------------------------------------------------------
+plan(multisession)
+tictoc::tic()
+keitaiso &lt;- df %&gt;% 
+  mutate(content=iconv(content,&quot;UTF-8&quot;,&quot;Shift-JIS&quot;)) %&gt;% 
+  mutate(tmp=future_map(content,~mecabtools::pos_full(.x,NULL),.progress=T)) %&gt;%
+  unnest(tmp)
+tictoc::toc()
+plan(sequential)
+
+
+# TF-IDFを算出する ---------------------------------------------------------------
+words &lt;- keitaiso %&gt;% 
+  filter(pos==&quot;名詞&quot;) %&gt;% 
+  filter(pos1!=&quot;数&quot;) %&gt;% 
+  select(id,year,surface)
+df_n &lt;- words %&gt;% 
+  count(year,surface,name=&quot;n&quot;)
+
+unique_article_n &lt;- words %&gt;% 
+  group_by(surface) %&gt;% 
+  summarize(n_article=length(unique(id)))
+# 出現回数が全ての記事で30回未満の単語を除外する
+used_words &lt;- unique_article_n %&gt;% 
+  filter(n_article&gt;=30) %&gt;% 
+  pull(surface)
+
+# 文書カテゴリの数（2004～2021年の18個）
+n_doc_all &lt;- df_n %&gt;% 
+  pull(year) %&gt;% 
+  unique() %&gt;% 
+  length()
+
+tf_idf &lt;- df_n %&gt;% 
+  filter(surface %in% used_words) %&gt;% 
+  mutate(tf=n/sum(n)) %&gt;%
+  add_count(surface,name=&quot;n_doc&quot;) %&gt;% 
+  mutate(idf=log(n_doc_all/n_doc)) %&gt;%
+  mutate(tf_idf=tf*idf)
+
+
+# TF-IDF上位の単語を取り出す --------------------------------------------------------
+res &lt;- tf_idf %&gt;% 
+  arrange(year,desc(tf_idf)) %&gt;%
+  group_by(year) %&gt;%
+  mutate(rank=row_number(desc(tf_idf))) %&gt;%
+  ungroup() %&gt;%
+  filter(rank&lt;=100)
+
+# 見た目を整えたテーブル
+res_table &lt;- res %&gt;% 
+  select(year,surface,rank) %&gt;% 
+  filter(rank&lt;=20) %&gt;% 
+  pivot_wider(names_from=year,values_from=surface,names_glue=&quot;{.name}年&quot;) %&gt;% 
+  mutate(rank=str_c(rank,&quot;位&quot;))</code></pre>
+</div>
+<div id="結果" class="section level2">
+<h2>結果</h2>
+<p>こちらです。各年の時勢をうまく表していますね！</p>
+<p><img src="images/20210912_ITmedia_news_analysis_result.png" /></p>
+<ul>
+<li>2020年～2021年に、「新型コロナ」、「新型コロナウイルス」、「新型コロナウイルス感染症」と3つありますが、表記の揺らぎです。本当はきちんと統一する必要があります。
+<ul>
+<li>この3単語だけなら前処理で対応できますが、表記揺れを網羅的に補正するとなるととても大変です。この辺りに自然言語処理の実用上の難しさがあります。</li>
+<li>しかし、それを差し引いてもこの2年間は新型コロナ一色でした。</li>
+</ul></li>
+<li>2005年の「インターネットリサーチサイト」は、アンケートサイトです。この年の記事には、このサイトでのアンケート結果を示す記事が特に多かったためランクインしています。これもある種自然言語処理上のノイズですね。</li>
+</ul>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>これだけ長い期間の記事が消えずに残っていること自体、大変な価値があると思います。<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>前者：今回のようなニュース文章だと、同じニュースの中に1回しか出てこない単語よりも5回出てくる単語の方がそのニュースのトピックになるような重要な単語なので、両者に同じ1というTFを振る2値化は不適当ということです。後者：文書カテゴリが2004～2021年の18個（<span class="math inline">\(j=1 \dots 18\)</span>)しかないので、logを取ると1個の文書にしか出てこない単語と18個全ての文書に出てくる単語のIDFがあまり変わらず、IDFとして機能しなくなったからだと思います。<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
