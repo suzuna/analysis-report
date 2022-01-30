@@ -1,5 +1,5 @@
 ---
-title: "データ分析のレポート置き場"
+title: "作ったものの置き場"
 author: ""
 date: ""
 output: 
@@ -8,15 +8,13 @@ output:
 
 ---
 
-[About](./about.html) [GitHub](https://github.com/suzuna)
-
-日々のデータ分析などの結果を記したRMarkdownの置き場です。記事中に記載がない限り、記事内のコードはRです。
+[GitHub](https://github.com/suzuna)
 
 ## 作ったもの
 
 ### データ分析
 
-- 2021/05/05 [ニコニコ動画のアニメ系音MADにおけるタグ別のマイリスト数/コメント数比率](./posts/20210505_soundmad_scatterplot.html)
+- [ニコニコ動画のアニメ系音MADにおけるタグ別のマイリスト数/コメント数比率](./posts/20210505_soundmad_scatterplot.html)
   - ニコニコ動画のスナップショット検索APIを用いてアニメ系音MADの再生数、マイリスト数、コメント数を取得し、マイリスト数/コメント数が大きい傾向にあるタグを調べました。
 
 ### Webアプリ
@@ -26,7 +24,7 @@ output:
   - 公式では行えない、再生数などに上限、下限を設定したり、マイリスト率やマイリスト率/コメント率などの大小でソートして結果を表示する検索ができます。
   - Shinyで実装しています。裏側ではニコニコ動画のAPIを叩いています。
 - [ITnewsheader](https://github.com/suzuna/ITnewsheader)
-  - ITニュースサイト（ITmedia、日経xtech、ASCII、Impress）より、最新のITニュースタイトルの一覧を表示します。取得したニュースタイトルから検索することもできます。
+  - ITニュースサイトより、最新のITニュースタイトルの一覧を表示します。取得したニュースタイトルから検索することもできます。
   - Shinyで実装しています。
   
 ### ライブラリ
