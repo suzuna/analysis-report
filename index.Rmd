@@ -24,9 +24,6 @@ output:
 - [ITmedia NEWSの全記事を用いてIT分野の流行語を調べた](./posts/20210912_ITmedia_news_analysis.html)
   - ITmedia NEWSの記事データについて、TF-IDFを用いて毎年の「その年のIT分野の世相を表す単語」をピックアップしました。
 
-- [ニコニコ動画のアニメ系音MADにおけるタグ別のマイリスト数/コメント数比率](./posts/20210505_soundmad_scatterplot.html)
-  - ニコニコ動画のスナップショット検索APIを用いてアニメ系音MADの再生数、マイリスト数、コメント数を取得し、マイリスト数/コメント数が大きい傾向にあるタグを調べました。
-
 ### Webアプリ
 
 - [ニコニコ検索](https://github.com/suzuna/niconico_search)
