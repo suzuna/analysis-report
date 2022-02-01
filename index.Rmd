@@ -20,6 +20,9 @@ output:
 
 - [東京電力株のベータ値をカルマンフィルタで推定する](./posts/20220130_beta_tepco.html)
   - 東京電力HD株のベータ値をカルマンフィルタで推定しました。
+  
+- [TOPIXのボラティリティをStanで推定する](./posts/20220201_svmodel.html)
+  - 非線形な状態空間モデルであるStochastic Volatilityモデルによって、TOPIXのボラティリティをStanで推定しました。
 
 - [ITmedia NEWSの全記事を用いてIT分野の流行語を調べた](./posts/20210912_ITmedia_news_analysis.html)
   - ITmedia NEWSの記事データについて、TF-IDFを用いて毎年の「その年のIT分野の世相を表す単語」をピックアップしました。
