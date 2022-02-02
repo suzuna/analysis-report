@@ -237,6 +237,27 @@ x_1 &amp; \sim N(0,\sigma_{\eta}^2/(1-\phi^2)) \quad（x_1の無条件分布）
 <p>2001/6/25～2022/1/30のTOPIXを用いました。データは私が口座を持っている証券会社からCSVでダウンロードしました。</p>
 <p>CSVのパスを与えると、不要な行・列を飛ばして読み込み、終値の前日に対する対数変化率（100倍してパーセント表記にする）を計算する関数を作っています。1日ラグを取る都合上、初日の対数変化率はNAになるため、1行目を削除しています。</p>
 <p>closeは終値、retは対前日の対数変化率（100倍したもの）を指します。</p>
+<pre class="r"><code>library(tidyverse)
+library(lubridate)
+library(KFAS)
+library(here)
+library(rstan)
+options(mc.cores=parallel::detectCores())
+rstan_options(auto_write=TRUE)
+
+
+source(here(&quot;script/utils.R&quot;),encoding=&quot;UTF-8&quot;)
+source(here(&quot;script/utils_kfas.R&quot;),encoding=&quot;UTF-8&quot;)
+
+
+# データの読み込み ----------------------------------------------------------------
+topix &lt;- read_stockcsv_daily(here(&quot;data/topix.csv&quot;),&quot;0000_topix&quot;)
+df &lt;- topix %&gt;% 
+  select(date,close,ret) %&gt;% 
+  # 最初の1日目の対数変化率がNAなのを除外する
+  slice(2:nrow(.))
+
+df</code></pre>
 <pre><code>## # A tibble: 5,047 x 3
 ##    date       close    ret
 ##    &lt;date&gt;     &lt;dbl&gt;  &lt;dbl&gt;
@@ -297,7 +318,8 @@ generated quantities {
 </ul></li>
 <li>y ~ normal(0,exp(x/2))の部分
 <ul>
-<li>正規分布の再生性より、平均<span class="math inline">\(\mu\)</span>、分散<span class="math inline">\(\sigma^2\)</span>の正規分布に従う確率変数<span class="math inline">\(X\)</span>を定数<span class="math inline">\(c\)</span>倍した確率変数<span class="math inline">\(cX\)</span>は、平均<span class="math inline">\(c \mu\)</span>、分散<span class="math inline">\(c^2 \sigma^2\)</span>の正規分布に従います。つまり、<span class="math inline">\(cX \sim N(c \mu,c^2 \sigma^2)\)</span>となります。これより、<span class="math inline">\(y \sim N(0, \sigma_{\eta}^2/(1-\phi^2)\)</span></li>
+<li>正規分布の再生性より、平均<span class="math inline">\(\mu\)</span>、分散<span class="math inline">\(\sigma^2\)</span>の正規分布に従う確率変数<span class="math inline">\(X\)</span>を定数<span class="math inline">\(c\)</span>倍した確率変数<span class="math inline">\(cX\)</span>は、平均<span class="math inline">\(c \mu\)</span>、分散<span class="math inline">\(c^2 \sigma^2\)</span>の正規分布に従います。つまり、<span class="math inline">\(cX \sim N(c \mu,c^2 \sigma^2)\)</span>となります。</li>
+<li>このことより、<span class="math inline">\(y \sim N(0, \sigma_{\eta}^2/(1-\phi^2)\)</span>となります。</li>
 </ul></li>
 <li><span class="math inline">\(\mu, \phi, \sigma_{\eta}\)</span>の事前分布は、SVモデルの元の論文であるKim, Shephard and Chib (1998) <a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>や、それを日本株に適用した大森, 渡部 (2007)<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> にある下記の値を用いました。無情報事前分布ではなく、これらの事前分布を書いてあげると収束しやすくなります。IGは逆ガンマ分布です。また、2本目の式は<span class="math inline">\(\phi \sim Uniform(-1,1)\)</span>でもいいとは思います。</li>
 </ul>
@@ -389,7 +411,7 @@ patchwork::wrap_plots(plot_vol,plot_close,ncol=1)</code></pre>
 <ol>
 <li id="fn1"><p>GARCHモデルは疑似最尤法でパラメータが求まるので、粒子フィルタやStanなどで推定する必要がないのがメリットです。<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 <li id="fn2"><p><span class="math inline">\(x_t\)</span>は定常な過程と仮定しています。<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
-<li id="fn3"><p>参考になる論文は例えばこちらがあります。渡部敏明, 佐々木浩二 (2006), 「ARCH型モデルと"Realized Volatilityによるボラティリティ予測とバリュー・アット・リスク」, 金融研究, 25 別冊(2), 39-74.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>参考になる論文は例えばこちらがあります。渡部敏明, 佐々木浩二 (2006), 「ARCH型モデルと“Realized Volatility”によるボラティリティ予測とバリュー・アット・リスク」, 金融研究, 25 別冊(2), 39-74.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
 <li id="fn4"><p>Kim, S., N. Shephard, and S. Chib (1998), “Stochastic Volatility: Likelihood Inference and Comparison with ARCH Models”, Review of Economic Studies, 65, 361-393.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
 <li id="fn5"><p>大森裕浩, 渡部敏明 (2007), 「MCMC法とその確率的ボラティリティモデルへの応用」CIRJEディスカッションペーパー, J-173, 1-39.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
 <li id="fn6"><p>extractという名前の関数はmagrittrにもあります。そのため、library(rstan)の後にlibrary(magrittr)すると、extract()で呼び出される関数はmagrittr::extractになるため、rstan::extractと名前空間を明示しておくのがいいです。<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
