@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo=TRUE,include=TRUE,message=FALSE,warning=FALSE,error=F
 # 例：out.width="800px",out.height="400px",fig.width=6,fig.height=3,dpi=300
 # -> 画像そのものは3600(6*300*2)x1800(3*300*2)であり、それを画面上800x400に縮小して表示する
 # out.width="100%"とすると、cssの横幅（約890px）にする
-knitr::opts_chunk$set(out.width="100%",fig.width=8,fig.height=4,dpi=300)
+knitr::opts_chunk$set(out.width="100%",fig.width=8,fig.height=4,dpi=300,fig.path="images/20210505_soundmad_scatterplot_")
 library(tidyverse)
 library(magrittr)
 library(knitr)
@@ -191,7 +191,7 @@ res <- df_anime_split %>%
 
 例えば、「のんのんびより」のタグが付された再生数5000以上のアニメ系音MADは103本あり、マイリスト数/再生数の中央値は約1.5%、マイリスト数/コメント数の中央値は約230%であることを表します。
 
-```{r}
+```{r,plot}
 # これらのタグについて図示する（並んでいる順番は動画数が多い順）
 tags_extract <- c(
   "チャージマン研！","けものフレンズ","日常","ラブライブ！","マイムマイム",
