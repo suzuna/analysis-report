@@ -1,5 +1,5 @@
-# analysis_report
+# analysis-report
 
 作ったものの置き場所です。
 
-https://suzuna.github.io/analysis_report/
+https://suzuna.github.io/analysis-report/
