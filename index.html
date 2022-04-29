@@ -13,7 +13,7 @@
 
 <title>作ったものの置き場</title>
 
-<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/header-attrs-2.13/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -57,6 +57,7 @@ if (window.hljs) {
 
 
 
+
 <link rel="stylesheet" href="main.css" type="text/css" />
 
 
@@ -81,6 +82,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -196,7 +200,7 @@ pre code {
 <ul>
 <li>ITmedia NEWSの記事データについて、TF-IDFを用いて毎年の「その年のIT分野の世相を表す単語」をピックアップしました。</li>
 </ul></li>
-<li><a href="https://github.com/suzuna/analysis_report/blob/master/posts/20220208_classify_renai_column.ipynb">Bag-of-WordsとLightGBMで恋愛コラムの本文からライターを判定する</a>
+<li><a href="https://github.com/suzuna/analysis-report/blob/master/posts/20220208_classify_renai_column.ipynb">Bag-of-WordsとLightGBMで恋愛コラムの本文からライターを判定する</a>
 <ul>
 <li>恋愛コラムサイトの記事データを用いて、コラムの本文から記事を書いたライターを分類するモデルをPythonで作成しました。</li>
 </ul></li>

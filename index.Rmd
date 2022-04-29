@@ -31,7 +31,7 @@ output:
 - [ITmedia NEWSの全記事を用いてIT分野の流行語を調べた](./posts/20210912_ITmedia_news_analysis.html)
   - ITmedia NEWSの記事データについて、TF-IDFを用いて毎年の「その年のIT分野の世相を表す単語」をピックアップしました。
   
-- [Bag-of-WordsとLightGBMで恋愛コラムの本文からライターを判定する](https://github.com/suzuna/analysis_report/blob/master/posts/20220208_classify_renai_column.ipynb)
+- [Bag-of-WordsとLightGBMで恋愛コラムの本文からライターを判定する](https://github.com/suzuna/analysis-report/blob/master/posts/20220208_classify_renai_column.ipynb)
   - 恋愛コラムサイトの記事データを用いて、コラムの本文から記事を書いたライターを分類するモデルをPythonで作成しました。
 
 ### Webアプリ
